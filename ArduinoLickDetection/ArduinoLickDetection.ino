@@ -6,7 +6,7 @@
 void TTLinputRising();
 
 uint32_t pressedTimeStamp;
-const uint32_t debounceDelay = 110;
+const uint32_t debounceDelay = 300;
 
 volatile boolean flagTTLinput = false;
 volatile boolean flagSwitchInput = false;
@@ -25,25 +25,17 @@ void setup() {
   Serial.begin(500000);
   pinMode(TTLinputPin, INPUT);
   pinMode(outputPin, OUTPUT);
-  //pinMode(switchPin, INPUT);
-  //pinMode(BNCTriggerPin, INPUT);
+  pinMode(switchPin, INPUT);
+  pinMode(BNCTriggerPin, INPUT);
   pinMode(pushButtonPin, INPUT_PULLUP);
 
   enableInterrupt(TTLinputPin, TTLinputRising, RISING);
-  //enableInterrupt(switchPin, switchInput, CHANGE);
-  //enableInterrupt(BNCTriggerPin, BNCTrigger, RISING);
+  enableInterrupt(switchPin, switchInput, CHANGE);
+  enableInterrupt(BNCTriggerPin, BNCTrigger, RISING);
   enableInterrupt(pushButtonPin, pushButton, RISING);
 }
 
 void loop() {
-  /*
-  digitalWrite(outputPin, HIGH);
-  Serial.println("on");
-  delay(100);
-  digitalWrite(outputPin,LOW);
-  Serial.println("off");
-  delay(50);*/
-  
   if (flagTTLinput) {
     flagTTLinput = false;
     valveInputActivation();
@@ -86,8 +78,8 @@ void valveInputActivation() {
       pressedTimeStamp = millis();
       digitalWrite(outputPin, HIGH);
       delay(100);
-      digitalWrite(outputPin, LOW);
-      //digitalWrite(outputPin, digitalRead(switchPin));
+      //digitalWrite(outputPin, LOW);
+      digitalWrite(outputPin, digitalRead(switchPin));
       Serial.println("valve activated input");
     }
   }
@@ -106,9 +98,9 @@ void valveBNCTriggerActivation() {
     delay(1);
     if (digitalRead(BNCTriggerPin)) { //debounce on release
       pressedTimeStamp = millis();
-      digitalWrite(outputPin, HIGH);
-      delay(500);
-      digitalWrite(outputPin, LOW);
+      //digitalWrite(outputPin, HIGH);
+      //delay(500);
+      //digitalWrite(outputPin, LOW);
       //digitalWrite(outputPin, digitalRead(switchPin));
       Serial.println("valve activated BNC");
     }
@@ -122,8 +114,8 @@ void valvePushButtonActivation(){
       pressedTimeStamp = millis();
       digitalWrite(outputPin, HIGH);
       delay(200);
-      digitalWrite(outputPin, LOW);
-      //digitalWrite(outputPin, digitalRead(switchPin));
+      //digitalWrite(outputPin, LOW);
+      digitalWrite(outputPin, digitalRead(switchPin));
       Serial.println("valve activated pushButton");
     }
   }
