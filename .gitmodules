@@ -1,0 +1,3 @@
+[submodule "UserGuide-LickSensor"]
+	path = UserGuide-LickSensor
+	url = https://github.com/maverstr/UserGuide-LickSensor
