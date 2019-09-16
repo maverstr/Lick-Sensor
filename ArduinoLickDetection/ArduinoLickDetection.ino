@@ -12,9 +12,11 @@ volatile boolean flagTTLinput = false;
 volatile boolean flagSwitchInput = false;
 volatile boolean flagBNCTrigger = false;
 volatile boolean flagPushButton = false;
+volatile boolean flagAirValveInput = false;
 
 const int TTLinputPin = 2;
-const int outputPin = 6;
+const int valveOutputPin = 6;
+const int airValveOutputPin = 7;
 const int switchPin = A0;
 const int BNCTriggerPin = 3;
 const int pushButtonPin = 13;
@@ -24,7 +26,7 @@ void setup() {
   pressedTimeStamp = millis();
   Serial.begin(500000);
   pinMode(TTLinputPin, INPUT);
-  pinMode(outputPin, OUTPUT);
+  pinMode(valveOutputPin, OUTPUT);
   pinMode(switchPin, INPUT);
   pinMode(BNCTriggerPin, INPUT);
   pinMode(pushButtonPin, INPUT_PULLUP);
@@ -33,6 +35,7 @@ void setup() {
   enableInterrupt(switchPin, switchInput, CHANGE);
   enableInterrupt(BNCTriggerPin, BNCTrigger, RISING);
   enableInterrupt(pushButtonPin, pushButton, RISING);
+  //enableInterrput( ..., AirValveTrigger, RISING);
 }
 
 void loop() {
@@ -48,9 +51,13 @@ void loop() {
     flagBNCTrigger = false;
     valveBNCTriggerActivation();
   }
-  if(flagPushButton){
+  if (flagPushButton) {
     flagPushButton = false;
     valvePushButtonActivation();
+  }
+  if(flagAirValveInput){
+    flagAirValveInput = false;
+    airValveActivation();
   }
 }
 
@@ -67,19 +74,24 @@ void BNCTrigger() {
   flagBNCTrigger = true;
 }
 
-void pushButton(){
+void pushButton() {
   flagPushButton = true;
 }
+
+void airValveTrigger(){
+  flagAirValveInput = true;
+}
+
 
 void valveInputActivation() {
   if (millis() > pressedTimeStamp + debounceDelay) {
     delay(1);
     if (digitalRead(TTLinputPin)) { //debounce on release
       pressedTimeStamp = millis();
-      digitalWrite(outputPin, HIGH);
+      digitalWrite(valveOutputPin, HIGH);
       delay(100);
-      //digitalWrite(outputPin, LOW);
-      digitalWrite(outputPin, digitalRead(switchPin));
+      //digitalWrite(valveOutputPin, LOW);
+      digitalWrite(valveOutputPin, digitalRead(switchPin));
       Serial.println("valve activated input");
     }
   }
@@ -88,7 +100,7 @@ void valveInputActivation() {
 void valveSwitchActivation() {
   if (millis() > pressedTimeStamp + debounceDelay) {
     pressedTimeStamp = millis();
-    digitalWrite(outputPin, digitalRead(switchPin));
+    digitalWrite(valveOutputPin, digitalRead(switchPin));
     Serial.println("valve activated switch");
   }
 }
@@ -98,26 +110,37 @@ void valveBNCTriggerActivation() {
     delay(1);
     if (digitalRead(BNCTriggerPin)) { //debounce on release
       pressedTimeStamp = millis();
-      //digitalWrite(outputPin, HIGH);
+      //digitalWrite(valveOutputPin, HIGH);
       //delay(500);
-      //digitalWrite(outputPin, LOW);
-      //digitalWrite(outputPin, digitalRead(switchPin));
+      //digitalWrite(valveOutputPin, LOW);
+      //digitalWrite(valveOutputPin, digitalRead(switchPin));
       Serial.println("valve activated BNC");
     }
   }
 }
 
-void valvePushButtonActivation(){
-    if (millis() > pressedTimeStamp + debounceDelay) {
+void valvePushButtonActivation() {
+  if (millis() > pressedTimeStamp + debounceDelay) {
     delay(1);
     if (!digitalRead(pushButtonPin)) { //debounce on release
       pressedTimeStamp = millis();
-      digitalWrite(outputPin, HIGH);
+      digitalWrite(valveOutputPin, HIGH);
       delay(200);
-      //digitalWrite(outputPin, LOW);
-      digitalWrite(outputPin, digitalRead(switchPin));
+      //digitalWrite(valveOutputPin, LOW);
+      digitalWrite(valveOutputPin, digitalRead(switchPin));
       Serial.println("valve activated pushButton");
     }
+  }
+}
+
+void airValveActivation() {
+  if (millis() > pressedTimeStamp + debounceDelay) {
+    pressedTimeStamp = millis();
+    digitalWrite(airValveOutputPin, HIGH);
+    delay(200);
+    digitalWrite(airValveOutputPin, LOW);
+    Serial.println("AIRVALVE activated");
+
   }
 }
 

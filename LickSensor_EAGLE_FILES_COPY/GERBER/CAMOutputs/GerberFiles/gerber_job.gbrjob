@@ -1,0 +1,24 @@
+{
+    "Header": {
+        "Comment": "All values are metric (mm)",
+        "CreationDate": "2019-08-14T14:31:52Z",
+        "GenerationSoftware": {
+            "Application": "EAGLE",
+            "Vendor": "Autodesk",
+            "Version": "9.4.2"
+        },
+        "Part": "Single"
+    },
+    "Overall": {
+        "BoardThickness": 1.671119,
+        "LayerNumber": 2,
+        "Name": {
+            "ProjectId": "LickSensor"
+        },
+        "Owner": "Verstraeten Maxime <v.maxime@gmail.com>",
+        "Size": {
+            "X": 68.58,
+            "Y": 53.34
+        }
+    }
+}
