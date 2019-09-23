@@ -6,7 +6,7 @@ uint32_t pressedTimeStampSensor;
 uint32_t pressedTimeStampBNC;
 uint32_t timeStampDropletPresent;
 
-const uint32_t debounceDelay = 300;
+const uint32_t debounceDelay = 500;
 
 //INTERRUPT FLAGS
 volatile boolean flagSensorInput = false;
@@ -25,7 +25,7 @@ const int pushButtonPin = 13;
 
 //DURATIONS
 const int mainValveActivationDuration = 200;
-const int drainValveActivationDuration = 500;
+const int drainValveActivationDuration = 20;
 const int drainValveAutoActivationDelay = 6000;
 
 //ODORS
@@ -49,18 +49,18 @@ void setup() {
   pinMode(BNCTriggerPin, INPUT);
   pinMode(pushButtonPin, INPUT_PULLUP);
 
-  enableInterrupt(sensorInputPin, sensorInputInterrrupt, RISING);
+  enableInterrupt(sensorInputPin, sensorInputInterrrupt, FALLING);
   enableInterrupt(pushButtonPin, AirValveTriggerInterrupt, RISING); //to trigger the drain
   enableInterrupt(switchPin, switchInputInterrupt, CHANGE);
   //enableInterrupt(pushButtonPin, pushButtonInterrupt, RISING);//to trigger the main valve
-  enableInterrupt(BNCTriggerPin, BNCTriggerInterrupt, RISING);
+  //enableInterrupt(BNCTriggerPin, BNCTriggerInterrupt, RISING);
 }
 
 void loop() {
   if (flagSensorInput) {
     flagSensorInput = false;
-    //valveSensorActivation();
-    rewardDelivery();
+    valveSensorActivation();
+    //rewardDelivery();
   }
   if (flagswitchInputInterrupt) {
     flagswitchInputInterrupt = false;
@@ -112,7 +112,7 @@ void BNCTriggerInterrupt() {
 void rewardDelivery() {
   if (millis() > pressedTimeStamp + debounceDelay && flagRewardingOdor) {
     delay(1);
-    if (digitalRead(sensorInputPin)) { //debounce on release
+    if (!digitalRead(sensorInputPin)) { //debounce on release
       pressedTimeStamp = millis();
       digitalWrite(valveOutputPin, HIGH);
       delay(mainValveActivationDuration);
@@ -128,7 +128,7 @@ void rewardDelivery() {
 void valveSensorActivation() {
   if (millis() > pressedTimeStampSensor + debounceDelay) {
     delay(1);
-    if (digitalRead(sensorInputPin)) { //debounce on release
+    if (!digitalRead(sensorInputPin)) { //debounce on release
       pressedTimeStampSensor = millis();
       digitalWrite(valveOutputPin, HIGH);
       delay(mainValveActivationDuration);
