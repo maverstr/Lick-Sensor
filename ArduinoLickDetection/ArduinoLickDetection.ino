@@ -75,6 +75,8 @@ void setup() {
   enableInterrupt(drainValvePushButtonPin, drainValvePushButtonInterrupt, RISING);
   enableInterrupt(drainValveSwitchPin, drainValveSwitchInterrupt, CHANGE);
   enableInterrupt(BNCTriggerPin, BNCTriggerInterrupt, RISING);
+
+  initToggleSwitches(); //sets the inital state of TSs to their actual hardware state
 }
 
 void loop() {
@@ -149,7 +151,7 @@ void rewardDelivery() {
       delay(mainValveActivationDuration);
       //digitalWrite(mainValveOutputPin, LOW);
       digitalWrite(mainValveOutputPin, digitalRead(mainValveSwitchPin));
-      Serial.println("MAIN activated input");
+      Serial.println("MAIN touch sensor activation");
       isDropletPresent = true;
       timeStampDropletPresent = millis();
     }
@@ -165,7 +167,7 @@ void mainValveTouchSensorActivation() {
       delay(mainValveActivationDuration);
       //digitalWrite(mainValveOutputPin, LOW);
       digitalWrite(mainValveOutputPin, digitalRead(mainValveSwitchPin));
-      Serial.println("MAIN activated input");
+      Serial.println("MAIN touch sensor activation");
       timeStampDropletPresent = millis();
       isDropletPresent = true;
     }
@@ -253,4 +255,13 @@ void dropletAutomaticRemoval() {
   }
 }
 
+// ===============================
+// =====     Miscellaneous    ====
+// ===============================
+void initToggleSwitches(){
+  Serial.print("Toggle switches initialization...");
+  digitalWrite(mainValveOutputPin, digitalRead(mainValveSwitchPin));
+  digitalWrite(drainValveOutputPin, digitalRead(drainValveSwitchPin));
+  Serial.println("Complete!");
+}
 
