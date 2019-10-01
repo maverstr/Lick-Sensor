@@ -8,6 +8,7 @@ uint32_t pressedTimeStampBNC;
 uint32_t timeStampDropletPresent;
 
 const uint32_t debounceDelay = 500;
+const uint32_t debounceDelayToggleSwitches = 200;
 
 //INTERRUPT FLAGS
 volatile boolean flagTouchSensorInput = false;
@@ -172,7 +173,7 @@ void mainValveTouchSensorActivation() {
 }
 
 void mainValveSwitchActivation() {
-  if (millis() > pressedTimeStampMainValve + debounceDelay) {
+  if (millis() > pressedTimeStampMainValve + debounceDelayToggleSwitches) {
     pressedTimeStampMainValve = millis();
     digitalWrite(mainValveOutputPin, digitalRead(mainValveSwitchPin));
     Serial.println("MAIN activated switch");
@@ -184,7 +185,7 @@ void mainValveSwitchActivation() {
 }
 
 void drainValveSwitchActivation() {
-  if (millis() > pressedTimeStampDrainValve + debounceDelay) {
+  if (millis() > pressedTimeStampDrainValve + debounceDelayToggleSwitches) {
     pressedTimeStampDrainValve = millis();
     digitalWrite(drainValveOutputPin, digitalRead(drainValveSwitchPin));
     Serial.println("DRAIN activated switch");
