@@ -8,7 +8,9 @@ uint32_t pressedTimeStampBNC;
 uint32_t timeStampDropletPresent;
 
 const uint32_t debounceDelay = 500;
-const uint32_t debounceDelayToggleSwitches = 200;
+const uint32_t debounceDelayToggleSwitches = 50;
+
+int counter = 0;
 
 //INTERRUPT FLAGS
 volatile boolean flagTouchSensorInput = false;
@@ -108,6 +110,11 @@ void loop() {
     assessRewardingOdorList();
   }
   dropletAutomaticRemoval();
+  counter++;
+  if(counter > 500){ //every once in a while, chech the status of the toggle switches
+    counter = 0;
+    initToggleSwitches();
+  }
 }
 
 // ===============================
@@ -249,7 +256,8 @@ void dropletAutomaticRemoval() {
   if (isDropletPresent && millis() > timeStampDropletPresent + drainValveAutoActivationDelay) {
     digitalWrite(drainValveOutputPin, HIGH);
     delay(drainValveActivationDuration);
-    digitalWrite(drainValveOutputPin, LOW);
+    digitalWrite(drainValveOutputPin, digitalRead(drainValveSwitchPin));
+    //digitalWrite(drainValveOutputPin, LOW);
     Serial.print("DRAIN AUTO ACTIVATION AFTER : "); Serial.println(drainValveAutoActivationDelay);
     isDropletPresent = false;
   }
@@ -264,4 +272,5 @@ void initToggleSwitches(){
   digitalWrite(drainValveOutputPin, digitalRead(drainValveSwitchPin));
   Serial.println("Complete!");
 }
+
 
